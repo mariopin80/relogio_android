@@ -33,12 +33,12 @@ jobs:
         run: gradle --no-daemon :app:assembleDebug
 
       - name: Rename APK
-        run: cp app/build/outputs/apk/debug/app-debug.apk RelogioCentroControle-Android-v1.0.apk
+        run: cp app/build/outputs/apk/debug/app-debug.apk RelogioCentroControle-Android-v1.1.apk
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: RelogioCentroControle-Android-v1.0
-          path: RelogioCentroControle-Android-v1.0.apk
+          name: RelogioCentroControle-Android-v1.1
+          path: RelogioCentroControle-Android-v1.1.apk
           if-no-files-found: error
           retention-days: 30
