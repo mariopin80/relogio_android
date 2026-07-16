@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Horloge du Centre de Contrôle</string>
+    <string name="settings_title">Paramètres des horloges</string>
+    <string name="general_section">Général</string>
+    <string name="language_label">Langue de l’application</string>
+    <string name="keep_screen_on">Garder l’écran allumé</string>
+    <string name="automatic_sync">Synchronisation automatique de l’heure</string>
+    <string name="automatic_sync_help">Lorsqu’elle est désactivée, l’application utilise l’heure de l’appareil. La synchronisation manuelle reste disponible.</string>
+    <string name="clocks_section">Horloges</string>
+    <string name="settings_help">Activez jusqu’à huit horloges, saisissez un sigle de 3 caractères maximum et choisissez un décalage UTC fixe.</string>
+    <string name="clock_number">Horloge %1$d</string>
+    <string name="label_hint">SIG</string>
+    <string name="utc_offset">Décalage UTC</string>
+    <string name="cancel">Annuler</string>
+    <string name="sync_now">Synchroniser</string>
+    <string name="save">Enregistrer</string>
+    <string name="enable_one_clock">Activez au moins une horloge.</string>
+    <string name="save_error">Impossible d’enregistrer les paramètres.</string>
+    <string name="settings_saved">Paramètres enregistrés.</string>
+    <string name="synchronizing">Synchronisation…</string>
+    <string name="sync_success">Synchronisé via %1$s</string>
+    <string name="sync_failure">Synchronisation indisponible ; utilisation de l’heure de l’appareil.</string>
+</resources>

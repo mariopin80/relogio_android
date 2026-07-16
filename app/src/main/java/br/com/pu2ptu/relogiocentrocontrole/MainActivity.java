@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -34,26 +35,49 @@ import java.net.InetAddress;
 import java.net.URL;
 import java.time.Instant;
 import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
 public final class MainActivity extends Activity {
     private static final String PREFS = "clock_config";
+    private static final String PREF_LANGUAGE = "language";
+    private static final String PREF_KEEP_SCREEN_ON = "keep_screen_on";
+    private static final String PREF_AUTO_SYNC = "auto_sync";
+
+    private static final int CLOCK_COUNT = 8;
+    private static final int MIN_OFFSET_MINUTES = -12 * 60;
+    private static final int MAX_OFFSET_MINUTES = 14 * 60;
+    private static final int OFFSET_STEP_MINUTES = 15;
+
     private static final DateTimeFormatter TIME_FORMAT =
             DateTimeFormatter.ofPattern("HH:mm:ss", Locale.US);
-    private static final String[] DEFAULT_LABELS = {"UTC", "BRT", "NYC", "LON", "JST"};
-    private static final String[] DEFAULT_ZONES = {
-            "UTC", "America/Sao_Paulo", "America/New_York", "Europe/London", "Asia/Tokyo"
+
+    private static final String[] LANGUAGE_CODES = {"en", "pt", "es", "it", "fr"};
+    private static final String[] LANGUAGE_NAMES = {
+            "English", "Português", "Español", "Italiano", "Français"
+    };
+
+    private static final String[] DEFAULT_LABELS = {
+            "UTC", "BRT", "EST", "GMT", "JST", "C6", "C7", "C8"
+    };
+    private static final int[] DEFAULT_OFFSETS = {
+            0, -180, -300, 0, 540, 0, 0, 0
+    };
+    private static final boolean[] DEFAULT_ENABLED = {
+            true, true, true, true, true, false, false, false
     };
 
     private final Handler handler = new Handler(Looper.getMainLooper());
     private final List<ClockEntry> clocks = new ArrayList<>();
     private ClockPanel panel;
     private volatile long timeOffsetMillis = 0L;
+    private volatile boolean syncInProgress = false;
+    private String languageCode = "en";
+    private boolean keepScreenOn = true;
+    private boolean autoSync = true;
 
     private final Runnable tick = new Runnable() {
         @Override
@@ -66,21 +90,36 @@ public final class MainActivity extends Activity {
     };
 
     @Override
+    protected void attachBaseContext(Context base) {
+        SharedPreferences prefs = base.getSharedPreferences(PREFS, Context.MODE_PRIVATE);
+        String code = normalizeLanguageCode(prefs.getString(PREF_LANGUAGE, "en"));
+        Locale locale = Locale.forLanguageTag(code);
+        Locale.setDefault(locale);
+
+        Configuration configuration = new Configuration(base.getResources().getConfiguration());
+        configuration.setLocale(locale);
+        super.attachBaseContext(base.createConfigurationContext(configuration));
+    }
+
+    @Override
     protected void onCreate(Bundle state) {
         super.onCreate(state);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         loadConfig();
+        applyScreenOnPreference();
         panel = new ClockPanel(this);
         setContentView(panel);
         enterImmersiveMode();
         handler.post(tick);
-        synchronizeTime();
+        if (autoSync) {
+            synchronizeTime();
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         enterImmersiveMode();
+        applyScreenOnPreference();
     }
 
     @Override
@@ -108,29 +147,78 @@ public final class MainActivity extends Activity {
         }
     }
 
-    private void loadConfig() {
-        SharedPreferences prefs = getSharedPreferences(PREFS, MODE_PRIVATE);
-        clocks.clear();
-        for (int i = 0; i < 5; i++) {
-            clocks.add(new ClockEntry(
-                    prefs.getBoolean("enabled_" + i, true),
-                    prefs.getString("label_" + i, DEFAULT_LABELS[i]),
-                    prefs.getString("zone_" + i, DEFAULT_ZONES[i])));
+    private void applyScreenOnPreference() {
+        if (keepScreenOn) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        } else {
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
     }
 
-    private boolean saveConfig(List<ClockEntry> entries) {
+    private void loadConfig() {
+        SharedPreferences prefs = getSharedPreferences(PREFS, MODE_PRIVATE);
+        languageCode = normalizeLanguageCode(prefs.getString(PREF_LANGUAGE, "en"));
+        keepScreenOn = prefs.getBoolean(PREF_KEEP_SCREEN_ON, true);
+        autoSync = prefs.getBoolean(PREF_AUTO_SYNC, true);
+
+        clocks.clear();
+        SharedPreferences.Editor migration = null;
+        Instant migrationInstant = Instant.now();
+
+        for (int i = 0; i < CLOCK_COUNT; i++) {
+            int offsetMinutes;
+            String offsetKey = "offset_" + i;
+
+            if (prefs.contains(offsetKey)) {
+                offsetMinutes = normalizeOffsetMinutes(
+                        prefs.getInt(offsetKey, DEFAULT_OFFSETS[i]));
+            } else {
+                String legacyZone = prefs.getString("zone_" + i, null);
+                offsetMinutes = legacyZone == null
+                        ? DEFAULT_OFFSETS[i]
+                        : offsetFromLegacyZone(legacyZone, migrationInstant, DEFAULT_OFFSETS[i]);
+
+                if (migration == null) {
+                    migration = prefs.edit();
+                }
+                migration.putInt(offsetKey, offsetMinutes);
+            }
+
+            clocks.add(new ClockEntry(
+                    prefs.getBoolean("enabled_" + i, DEFAULT_ENABLED[i]),
+                    prefs.getString("label_" + i, DEFAULT_LABELS[i]),
+                    offsetMinutes));
+        }
+
+        if (migration != null) {
+            migration.apply();
+        }
+    }
+
+    private boolean saveConfig(
+            List<ClockEntry> entries,
+            String selectedLanguage,
+            boolean selectedKeepScreenOn,
+            boolean selectedAutoSync) {
         SharedPreferences.Editor editor = getSharedPreferences(PREFS, MODE_PRIVATE).edit();
+        editor.putString(PREF_LANGUAGE, normalizeLanguageCode(selectedLanguage));
+        editor.putBoolean(PREF_KEEP_SCREEN_ON, selectedKeepScreenOn);
+        editor.putBoolean(PREF_AUTO_SYNC, selectedAutoSync);
+
         for (int i = 0; i < entries.size(); i++) {
             ClockEntry entry = entries.get(i);
             editor.putBoolean("enabled_" + i, entry.enabled);
             editor.putString("label_" + i, entry.label);
-            editor.putString("zone_" + i, entry.zoneId);
+            editor.putInt("offset_" + i, entry.offsetMinutes);
+            editor.remove("zone_" + i);
         }
         return editor.commit();
     }
 
     private void showSettings() {
+        final String previousLanguage = languageCode;
+        final boolean previousAutoSync = autoSync;
+
         ScrollView scroll = new ScrollView(this);
         LinearLayout root = new LinearLayout(this);
         root.setOrientation(LinearLayout.VERTICAL);
@@ -138,21 +226,53 @@ public final class MainActivity extends Activity {
         root.setPadding(pad, pad, pad, pad);
         scroll.addView(root);
 
-        TextView help = new TextView(this);
-        help.setText("Ative até cinco relógios, informe uma sigla de até 3 letras e escolha o fuso horário.");
-        help.setPadding(0, 0, 0, dp(12));
-        root.addView(help, new LinearLayout.LayoutParams(
+        addSectionTitle(root, getString(R.string.general_section));
+
+        TextView languageLabel = new TextView(this);
+        languageLabel.setText(R.string.language_label);
+        languageLabel.setPadding(0, dp(6), 0, dp(4));
+        root.addView(languageLabel);
+
+        final Spinner languageSpinner = new Spinner(this);
+        ArrayAdapter<String> languageAdapter = new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_spinner_item,
+                LANGUAGE_NAMES);
+        languageAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        languageSpinner.setAdapter(languageAdapter);
+        languageSpinner.setSelection(languagePosition(languageCode));
+        root.addView(languageSpinner, new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT));
+                dp(52)));
 
-        List<String> zoneIds = new ArrayList<>(ZoneId.getAvailableZoneIds());
-        Collections.sort(zoneIds);
+        final CheckBox keepScreenOnCheck = new CheckBox(this);
+        keepScreenOnCheck.setText(R.string.keep_screen_on);
+        keepScreenOnCheck.setChecked(keepScreenOn);
+        root.addView(keepScreenOnCheck);
 
-        final CheckBox[] enabled = new CheckBox[5];
-        final EditText[] labels = new EditText[5];
-        final Spinner[] zones = new Spinner[5];
+        final CheckBox autoSyncCheck = new CheckBox(this);
+        autoSyncCheck.setText(R.string.automatic_sync);
+        autoSyncCheck.setChecked(autoSync);
+        root.addView(autoSyncCheck);
 
-        for (int i = 0; i < 5; i++) {
+        TextView syncHelp = new TextView(this);
+        syncHelp.setText(R.string.automatic_sync_help);
+        syncHelp.setPadding(dp(4), 0, 0, dp(12));
+        root.addView(syncHelp);
+
+        addSectionTitle(root, getString(R.string.clocks_section));
+
+        TextView help = new TextView(this);
+        help.setText(R.string.settings_help);
+        help.setPadding(0, dp(6), 0, dp(12));
+        root.addView(help);
+
+        List<String> offsetLabels = buildOffsetLabels();
+        final CheckBox[] enabled = new CheckBox[CLOCK_COUNT];
+        final EditText[] labels = new EditText[CLOCK_COUNT];
+        final Spinner[] offsets = new Spinner[CLOCK_COUNT];
+
+        for (int i = 0; i < CLOCK_COUNT; i++) {
             ClockEntry entry = clocks.get(i);
 
             LinearLayout block = new LinearLayout(this);
@@ -164,7 +284,7 @@ public final class MainActivity extends Activity {
 
             enabled[i] = new CheckBox(this);
             enabled[i].setChecked(entry.enabled);
-            enabled[i].setText("Relógio " + (i + 1));
+            enabled[i].setText(getString(R.string.clock_number, i + 1));
             header.addView(enabled[i], new LinearLayout.LayoutParams(0, dp(48), 1f));
 
             labels[i] = new EditText(this);
@@ -172,21 +292,25 @@ public final class MainActivity extends Activity {
             labels[i].setText(entry.label);
             labels[i].setAllCaps(true);
             labels[i].setSelectAllOnFocus(true);
-            labels[i].setHint("SIG");
+            labels[i].setHint(R.string.label_hint);
             labels[i].setFilters(new InputFilter[]{new InputFilter.LengthFilter(3)});
             header.addView(labels[i], new LinearLayout.LayoutParams(dp(92), dp(48)));
             block.addView(header);
 
-            zones[i] = new Spinner(this);
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(
+            TextView offsetLabel = new TextView(this);
+            offsetLabel.setText(R.string.utc_offset);
+            offsetLabel.setPadding(dp(4), 0, 0, 0);
+            block.addView(offsetLabel);
+
+            offsets[i] = new Spinner(this);
+            ArrayAdapter<String> offsetAdapter = new ArrayAdapter<>(
                     this,
                     android.R.layout.simple_spinner_item,
-                    zoneIds);
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            zones[i].setAdapter(adapter);
-            int position = zoneIds.indexOf(entry.zoneId);
-            zones[i].setSelection(Math.max(position, 0));
-            block.addView(zones[i], new LinearLayout.LayoutParams(
+                    offsetLabels);
+            offsetAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            offsets[i].setAdapter(offsetAdapter);
+            offsets[i].setSelection(positionForOffset(entry.offsetMinutes));
+            block.addView(offsets[i], new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     dp(52)));
 
@@ -194,11 +318,11 @@ public final class MainActivity extends Activity {
         }
 
         AlertDialog dialog = new AlertDialog.Builder(this)
-                .setTitle("Configurar relógios")
+                .setTitle(R.string.settings_title)
                 .setView(scroll)
-                .setNegativeButton("Cancelar", null)
-                .setNeutralButton("Sincronizar", null)
-                .setPositiveButton("Salvar", null)
+                .setNegativeButton(R.string.cancel, null)
+                .setNeutralButton(R.string.sync_now, null)
+                .setPositiveButton(R.string.save, null)
                 .create();
 
         dialog.setOnShowListener(ignored -> {
@@ -207,7 +331,7 @@ public final class MainActivity extends Activity {
                 List<ClockEntry> updated = new ArrayList<>();
                 boolean anyEnabled = false;
 
-                for (int i = 0; i < 5; i++) {
+                for (int i = 0; i < CLOCK_COUNT; i++) {
                     String label = labels[i].getText().toString()
                             .trim()
                             .toUpperCase(Locale.ROOT);
@@ -215,39 +339,57 @@ public final class MainActivity extends Activity {
                         label = "C" + (i + 1);
                     }
 
-                    Object selectedZone = zones[i].getSelectedItem();
-                    String zoneId = selectedZone == null
-                            ? DEFAULT_ZONES[i]
-                            : selectedZone.toString();
-
+                    int offsetMinutes = offsetForPosition(offsets[i].getSelectedItemPosition());
                     boolean isEnabled = enabled[i].isChecked();
                     anyEnabled |= isEnabled;
-                    updated.add(new ClockEntry(isEnabled, label, zoneId));
+                    updated.add(new ClockEntry(isEnabled, label, offsetMinutes));
                 }
 
                 if (!anyEnabled) {
-                    Toast.makeText(
-                            this,
-                            "Ative pelo menos um relógio.",
-                            Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, R.string.enable_one_clock, Toast.LENGTH_LONG).show();
                     return;
                 }
 
-                if (!saveConfig(updated)) {
-                    Toast.makeText(
-                            this,
-                            "Não foi possível gravar as configurações.",
-                            Toast.LENGTH_LONG).show();
+                int languageIndex = languageSpinner.getSelectedItemPosition();
+                String selectedLanguage = languageIndex >= 0 && languageIndex < LANGUAGE_CODES.length
+                        ? LANGUAGE_CODES[languageIndex]
+                        : "en";
+
+                if (!saveConfig(
+                        updated,
+                        selectedLanguage,
+                        keepScreenOnCheck.isChecked(),
+                        autoSyncCheck.isChecked())) {
+                    Toast.makeText(this, R.string.save_error, Toast.LENGTH_LONG).show();
                     return;
                 }
 
                 loadConfig();
+                applyScreenOnPreference();
+
+                boolean languageChanged = !previousLanguage.equals(languageCode);
+                boolean autoSyncEnabledNow = !previousAutoSync && autoSync;
+                boolean autoSyncDisabledNow = previousAutoSync && !autoSync;
+                if (autoSyncDisabledNow) {
+                    timeOffsetMillis = 0L;
+                }
+
+                dialog.dismiss();
+
+                if (languageChanged) {
+                    recreate();
+                    return;
+                }
+
                 if (panel != null) {
                     panel.invalidate();
                     panel.requestLayout();
                 }
-                Toast.makeText(this, "Configurações salvas.", Toast.LENGTH_SHORT).show();
-                dialog.dismiss();
+                Toast.makeText(this, R.string.settings_saved, Toast.LENGTH_SHORT).show();
+
+                if (autoSyncEnabledNow) {
+                    synchronizeTime();
+                }
             });
         });
 
@@ -255,8 +397,24 @@ public final class MainActivity extends Activity {
         dialog.show();
     }
 
+    private void addSectionTitle(LinearLayout root, String title) {
+        TextView text = new TextView(this);
+        text.setText(title);
+        text.setTextSize(18f);
+        text.setTextColor(Color.rgb(255, 50, 31));
+        text.setTypeface(android.graphics.Typeface.DEFAULT_BOLD);
+        text.setPadding(0, dp(4), 0, dp(4));
+        root.addView(text);
+    }
+
     private void synchronizeTime() {
-        Toast.makeText(this, "Sincronizando...", Toast.LENGTH_SHORT).show();
+        if (syncInProgress) {
+            Toast.makeText(this, R.string.synchronizing, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        syncInProgress = true;
+        Toast.makeText(this, R.string.synchronizing, Toast.LENGTH_SHORT).show();
         new Thread(() -> {
             Long offset = queryNtp("time.cloudflare.com");
             String method = "NTP";
@@ -270,14 +428,16 @@ public final class MainActivity extends Activity {
             final Long result = offset;
             final String source = method;
             handler.post(() -> {
+                syncInProgress = false;
                 if (result != null) {
                     timeOffsetMillis = result;
-                    Toast.makeText(this, "Sincronizado via " + source, Toast.LENGTH_SHORT).show();
-                } else {
                     Toast.makeText(
                             this,
-                            "Sem sincronização; usando hora do aparelho",
-                            Toast.LENGTH_LONG).show();
+                            getString(R.string.sync_success, source),
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    timeOffsetMillis = 0L;
+                    Toast.makeText(this, R.string.sync_failure, Toast.LENGTH_LONG).show();
                 }
             });
         }, "time-sync").start();
@@ -335,6 +495,71 @@ public final class MainActivity extends Activity {
         }
     }
 
+    private static String normalizeLanguageCode(String code) {
+        if (code != null) {
+            for (String supported : LANGUAGE_CODES) {
+                if (supported.equalsIgnoreCase(code)) {
+                    return supported;
+                }
+            }
+        }
+        return "en";
+    }
+
+    private static int languagePosition(String code) {
+        String normalized = normalizeLanguageCode(code);
+        for (int i = 0; i < LANGUAGE_CODES.length; i++) {
+            if (LANGUAGE_CODES[i].equals(normalized)) {
+                return i;
+            }
+        }
+        return 0;
+    }
+
+    private static int offsetFromLegacyZone(String zoneId, Instant instant, int fallback) {
+        try {
+            int minutes = ZoneId.of(zoneId).getRules().getOffset(instant).getTotalSeconds() / 60;
+            return normalizeOffsetMinutes(minutes);
+        } catch (Exception ignored) {
+            return fallback;
+        }
+    }
+
+    private static int normalizeOffsetMinutes(int minutes) {
+        int clamped = Math.max(MIN_OFFSET_MINUTES, Math.min(MAX_OFFSET_MINUTES, minutes));
+        return Math.round(clamped / (float) OFFSET_STEP_MINUTES) * OFFSET_STEP_MINUTES;
+    }
+
+    private static List<String> buildOffsetLabels() {
+        List<String> labels = new ArrayList<>();
+        for (int minutes = MIN_OFFSET_MINUTES;
+             minutes <= MAX_OFFSET_MINUTES;
+             minutes += OFFSET_STEP_MINUTES) {
+            labels.add(formatOffset(minutes));
+        }
+        return labels;
+    }
+
+    private static String formatOffset(int totalMinutes) {
+        int absolute = Math.abs(totalMinutes);
+        return String.format(
+                Locale.ROOT,
+                "UTC%s%02d:%02d",
+                totalMinutes < 0 ? "-" : "+",
+                absolute / 60,
+                absolute % 60);
+    }
+
+    private static int positionForOffset(int minutes) {
+        return (normalizeOffsetMinutes(minutes) - MIN_OFFSET_MINUTES) / OFFSET_STEP_MINUTES;
+    }
+
+    private static int offsetForPosition(int position) {
+        int maxPosition = (MAX_OFFSET_MINUTES - MIN_OFFSET_MINUTES) / OFFSET_STEP_MINUTES;
+        int safePosition = Math.max(0, Math.min(maxPosition, position));
+        return MIN_OFFSET_MINUTES + safePosition * OFFSET_STEP_MINUTES;
+    }
+
     private int dp(int value) {
         return Math.round(value * getResources().getDisplayMetrics().density);
     }
@@ -342,12 +567,12 @@ public final class MainActivity extends Activity {
     private static final class ClockEntry {
         final boolean enabled;
         final String label;
-        final String zoneId;
+        final int offsetMinutes;
 
-        ClockEntry(boolean enabled, String label, String zoneId) {
+        ClockEntry(boolean enabled, String label, int offsetMinutes) {
             this.enabled = enabled;
             this.label = label;
-            this.zoneId = zoneId;
+            this.offsetMinutes = normalizeOffsetMinutes(offsetMinutes);
         }
     }
 
@@ -451,8 +676,8 @@ public final class MainActivity extends Activity {
 
                 String formatted;
                 try {
-                    formatted = ZonedDateTime.ofInstant(now, ZoneId.of(entry.zoneId))
-                            .format(TIME_FORMAT);
+                    ZoneOffset offset = ZoneOffset.ofTotalSeconds(entry.offsetMinutes * 60);
+                    formatted = now.atOffset(offset).format(TIME_FORMAT);
                 } catch (Exception ex) {
                     formatted = "--:--:--";
                 }

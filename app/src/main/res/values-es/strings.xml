@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Reloj de Centro de Control</string>
+    <string name="settings_title">Configuración de los relojes</string>
+    <string name="general_section">General</string>
+    <string name="language_label">Idioma de la aplicación</string>
+    <string name="keep_screen_on">Mantener la pantalla encendida</string>
+    <string name="automatic_sync">Sincronización horaria automática</string>
+    <string name="automatic_sync_help">Cuando está desactivada, la aplicación usa la hora del dispositivo. La sincronización manual sigue disponible.</string>
+    <string name="clocks_section">Relojes</string>
+    <string name="settings_help">Activa hasta ocho relojes, introduce una sigla de hasta 3 caracteres y selecciona un desfase UTC fijo.</string>
+    <string name="clock_number">Reloj %1$d</string>
+    <string name="label_hint">SIG</string>
+    <string name="utc_offset">Desfase UTC</string>
+    <string name="cancel">Cancelar</string>
+    <string name="sync_now">Sincronizar</string>
+    <string name="save">Guardar</string>
+    <string name="enable_one_clock">Activa al menos un reloj.</string>
+    <string name="save_error">No se pudo guardar la configuración.</string>
+    <string name="settings_saved">Configuración guardada.</string>
+    <string name="synchronizing">Sincronizando…</string>
+    <string name="sync_success">Sincronizado mediante %1$s</string>
+    <string name="sync_failure">Sincronización no disponible; se usa la hora del dispositivo.</string>
+</resources>

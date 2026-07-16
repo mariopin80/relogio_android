@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Orologio Centro di Controllo</string>
+    <string name="settings_title">Impostazioni degli orologi</string>
+    <string name="general_section">Generali</string>
+    <string name="language_label">Lingua dell’app</string>
+    <string name="keep_screen_on">Mantieni lo schermo acceso</string>
+    <string name="automatic_sync">Sincronizzazione automatica dell’ora</string>
+    <string name="automatic_sync_help">Quando è disattivata, l’app usa l’ora del dispositivo. La sincronizzazione manuale rimane disponibile.</string>
+    <string name="clocks_section">Orologi</string>
+    <string name="settings_help">Attiva fino a otto orologi, inserisci una sigla di massimo 3 caratteri e seleziona un offset UTC fisso.</string>
+    <string name="clock_number">Orologio %1$d</string>
+    <string name="label_hint">SIG</string>
+    <string name="utc_offset">Offset UTC</string>
+    <string name="cancel">Annulla</string>
+    <string name="sync_now">Sincronizza</string>
+    <string name="save">Salva</string>
+    <string name="enable_one_clock">Attiva almeno un orologio.</string>
+    <string name="save_error">Impossibile salvare le impostazioni.</string>
+    <string name="settings_saved">Impostazioni salvate.</string>
+    <string name="synchronizing">Sincronizzazione…</string>
+    <string name="sync_success">Sincronizzato tramite %1$s</string>
+    <string name="sync_failure">Sincronizzazione non disponibile; viene usata l’ora del dispositivo.</string>
+</resources>

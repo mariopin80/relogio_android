@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Mission Control Clock</string>
+    <string name="settings_title">Clock settings</string>
+    <string name="general_section">General</string>
+    <string name="language_label">App language</string>
+    <string name="keep_screen_on">Keep screen on</string>
+    <string name="automatic_sync">Automatic time synchronization</string>
+    <string name="automatic_sync_help">When disabled, the app uses the device time. Manual synchronization remains available.</string>
+    <string name="clocks_section">Clocks</string>
+    <string name="settings_help">Enable up to eight clocks, enter a label of up to 3 characters, and select a fixed UTC offset.</string>
+    <string name="clock_number">Clock %1$d</string>
+    <string name="label_hint">ID</string>
+    <string name="utc_offset">UTC offset</string>
+    <string name="cancel">Cancel</string>
+    <string name="sync_now">Sync now</string>
+    <string name="save">Save</string>
+    <string name="enable_one_clock">Enable at least one clock.</string>
+    <string name="save_error">Settings could not be saved.</string>
+    <string name="settings_saved">Settings saved.</string>
+    <string name="synchronizing">Synchronizing…</string>
+    <string name="sync_success">Synchronized via %1$s</string>
+    <string name="sync_failure">Synchronization unavailable; using device time.</string>
+</resources>
