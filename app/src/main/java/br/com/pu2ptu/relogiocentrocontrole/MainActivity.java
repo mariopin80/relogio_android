@@ -104,6 +104,7 @@ public final class MainActivity extends Activity {
 
     private volatile long timeOffsetMillis = 0L;
     private volatile boolean syncInProgress = false;
+    private volatile long syncRequestId = 0L;
     private SyncState syncState = SyncState.DEVICE_TIME;
     private String syncSource = "";
     private long lastSyncUtcMillis = 0L;
@@ -169,6 +170,7 @@ public final class MainActivity extends Activity {
 
     @Override
     protected void onDestroy() {
+        syncRequestId++;
         handler.removeCallbacksAndMessages(null);
         super.onDestroy();
     }
@@ -612,6 +614,7 @@ public final class MainActivity extends Activity {
         }
 
         syncInProgress = true;
+        final long requestId = ++syncRequestId;
         syncState = SyncState.SYNCHRONIZING;
         if (panel != null) {
             panel.invalidate();
@@ -632,6 +635,9 @@ public final class MainActivity extends Activity {
             final SyncMeasurement result = measurement;
             final String source = method;
             handler.post(() -> {
+                if (requestId != syncRequestId) {
+                    return;
+                }
                 syncInProgress = false;
                 if (result != null) {
                     timeOffsetMillis = result.offsetMillis;
@@ -657,6 +663,8 @@ public final class MainActivity extends Activity {
     }
 
     private void useDeviceTime() {
+        syncRequestId++;
+        syncInProgress = false;
         timeOffsetMillis = 0L;
         lastSyncOffsetMillis = 0L;
         lastSyncRoundTripMillis = 0L;
