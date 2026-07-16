@@ -33,12 +33,12 @@ jobs:
         run: gradle --no-daemon :app:assembleDebug
 
       - name: Rename APK
-        run: cp app/build/outputs/apk/debug/app-debug.apk MissionControlClock-Android-v1.2.0.apk
+        run: cp app/build/outputs/apk/debug/app-debug.apk MissionControlClock-Android-v1.3.0.apk
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: MissionControlClock-Android-v1.2.0
-          path: MissionControlClock-Android-v1.2.0.apk
+          name: MissionControlClock-Android-v1.3.0
+          path: MissionControlClock-Android-v1.3.0.apk
           if-no-files-found: error
           retention-days: 30

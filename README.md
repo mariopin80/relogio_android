@@ -10,8 +10,14 @@ Aplicativo Android nativo para exibir até oito horários simultâneos, inspirad
 - Interface em inglês, português, espanhol, italiano e francês; inglês é o idioma inicial.
 - Sincronização automática configurável por NTP, com fallback por HTTPS.
 - Sincronização manual pelo menu ou por toque duplo.
+- Rodapé técnico com fonte da hora, correção aplicada, RTT e horário da última sincronização.
 - Tela vertical ou horizontal e modo imersivo.
 - Opção de manter a tela ligada durante o uso.
+- Layout automático, em uma coluna ou em duas colunas.
+- Reordenação dos relógios e ajustes de tamanho do texto e espaçamento.
+- Data, dia da semana e dia do ano (DOY) configuráveis.
+- Temas Mission Red, Terminal Green, Amber, Monochrome White e Night Red.
+- Proteção opcional contra burn-in para telas OLED.
 - Configuração salva no aparelho.
 - Toque longo na tela para abrir as configurações.
 

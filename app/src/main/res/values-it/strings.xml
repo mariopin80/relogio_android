@@ -21,4 +21,46 @@
     <string name="synchronizing">Sincronizzazione…</string>
     <string name="sync_success">Sincronizzato tramite %1$s</string>
     <string name="sync_failure">Sincronizzazione non disponibile; viene usata l’ora del dispositivo.</string>
+    <string name="display_section">Schermo</string>
+    <string name="layout_mode">Layout</string>
+    <string name="text_size">Dimensione del testo</string>
+    <string name="spacing">Spaziatura dei pannelli</string>
+    <string name="date_section">Data e calendario</string>
+    <string name="show_date">Mostra data</string>
+    <string name="show_doy">Mostra giorno dell’anno (DOY)</string>
+    <string name="show_weekday">Mostra giorno della settimana</string>
+    <string name="appearance_section">Aspetto</string>
+    <string name="color_theme">Tema colore</string>
+    <string name="burn_in_protection">Protezione dal burn-in</string>
+    <string name="burn_in_help">Sposta leggermente il pannello una volta al minuto per ridurre l’usura degli schermi OLED.</string>
+    <string name="reorder_help">Usa le frecce per modificare l’ordine degli orologi.</string>
+    <string name="move_up">Sposta l’orologio verso l’alto</string>
+    <string name="move_down">Sposta l’orologio verso il basso</string>
+    <string name="sync_status_device_time">Ora del dispositivo</string>
+    <string name="sync_status_synchronizing">Sincronizzazione…</string>
+    <string name="sync_status_failed">Sincronizzazione non riuscita · ora del dispositivo</string>
+    <string name="sync_status_synchronized">%1$s · Δ %2$s ms · RTT %3$d ms · %4$s UTC</string>
+
+    <string-array name="layout_modes">
+        <item>Automatico</item>
+        <item>Una colonna</item>
+        <item>Due colonne</item>
+    </string-array>
+    <string-array name="text_sizes">
+        <item>Piccolo</item>
+        <item>Medio</item>
+        <item>Grande</item>
+    </string-array>
+    <string-array name="spacing_options">
+        <item>Compatto</item>
+        <item>Bilanciato</item>
+        <item>Ampio</item>
+    </string-array>
+    <string-array name="color_themes">
+        <item>Rosso Mission Control</item>
+        <item>Verde Terminale</item>
+        <item>Ambra</item>
+        <item>Bianco Monocromatico</item>
+        <item>Rosso Notturno</item>
+    </string-array>
 </resources>

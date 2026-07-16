@@ -21,4 +21,46 @@
     <string name="synchronizing">Sincronizando…</string>
     <string name="sync_success">Sincronizado via %1$s</string>
     <string name="sync_failure">Sincronização indisponível; usando a hora do aparelho.</string>
+    <string name="display_section">Exibição</string>
+    <string name="layout_mode">Layout</string>
+    <string name="text_size">Tamanho do texto</string>
+    <string name="spacing">Espaçamento dos painéis</string>
+    <string name="date_section">Data e calendário</string>
+    <string name="show_date">Mostrar data</string>
+    <string name="show_doy">Mostrar dia do ano (DOY)</string>
+    <string name="show_weekday">Mostrar dia da semana</string>
+    <string name="appearance_section">Aparência</string>
+    <string name="color_theme">Tema de cores</string>
+    <string name="burn_in_protection">Proteção contra burn-in</string>
+    <string name="burn_in_help">Desloca sutilmente o painel uma vez por minuto para reduzir o desgaste de telas OLED.</string>
+    <string name="reorder_help">Use as setas para alterar a ordem dos relógios.</string>
+    <string name="move_up">Mover relógio para cima</string>
+    <string name="move_down">Mover relógio para baixo</string>
+    <string name="sync_status_device_time">Hora do aparelho</string>
+    <string name="sync_status_synchronizing">Sincronizando…</string>
+    <string name="sync_status_failed">Falha na sincronização · hora do aparelho</string>
+    <string name="sync_status_synchronized">%1$s · Δ %2$s ms · RTT %3$d ms · %4$s UTC</string>
+
+    <string-array name="layout_modes">
+        <item>Automático</item>
+        <item>Uma coluna</item>
+        <item>Duas colunas</item>
+    </string-array>
+    <string-array name="text_sizes">
+        <item>Pequeno</item>
+        <item>Médio</item>
+        <item>Grande</item>
+    </string-array>
+    <string-array name="spacing_options">
+        <item>Compacto</item>
+        <item>Equilibrado</item>
+        <item>Confortável</item>
+    </string-array>
+    <string-array name="color_themes">
+        <item>Vermelho Mission Control</item>
+        <item>Verde Terminal</item>
+        <item>Âmbar</item>
+        <item>Branco Monocromático</item>
+        <item>Vermelho Noturno</item>
+    </string-array>
 </resources>
