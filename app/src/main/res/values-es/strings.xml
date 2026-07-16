@@ -23,7 +23,8 @@
     <string name="sync_failure">Sincronización no disponible; se usa la hora del dispositivo.</string>
     <string name="display_section">Pantalla</string>
     <string name="layout_mode">Diseño</string>
-    <string name="text_size">Tamaño del texto</string>
+    <string name="text_size">Tamaño de la sigla y la hora</string>
+    <string name="text_size_help">Ajusta conjuntamente la sigla, la hora y la línea de fecha. La aplicación los reduce automáticamente cuando falta espacio.</string>
     <string name="spacing">Espaciado de los paneles</string>
     <string name="date_section">Fecha y calendario</string>
     <string name="show_date">Mostrar fecha</string>

@@ -317,12 +317,25 @@ public final class MainActivity extends Activity {
         syncHelp.setPadding(dp(4), 0, 0, dp(12));
         root.addView(syncHelp);
 
+        Button syncNowButton = new Button(this);
+        syncNowButton.setText(R.string.sync_now);
+        syncNowButton.setOnClickListener(v -> synchronizeTime());
+        root.addView(syncNowButton, new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                dp(48)));
+
         addSectionTitle(root, getString(R.string.display_section));
 
         final Spinner layoutSpinner = addArraySpinner(
                 root, R.string.layout_mode, R.array.layout_modes, layoutMode);
         final Spinner textSizeSpinner = addArraySpinner(
                 root, R.string.text_size, R.array.text_sizes, textSizeSetting);
+
+        TextView textSizeHelp = new TextView(this);
+        textSizeHelp.setText(R.string.text_size_help);
+        textSizeHelp.setPadding(dp(4), 0, 0, dp(6));
+        root.addView(textSizeHelp);
+
         final Spinner spacingSpinner = addArraySpinner(
                 root, R.string.spacing, R.array.spacing_options, spacingSetting);
 
@@ -387,12 +400,10 @@ public final class MainActivity extends Activity {
                 .setTitle(R.string.settings_title)
                 .setView(scroll)
                 .setNegativeButton(R.string.cancel, null)
-                .setNeutralButton(R.string.sync_now, null)
                 .setPositiveButton(R.string.save, null)
                 .create();
 
         dialog.setOnShowListener(ignored -> {
-            dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(v -> synchronizeTime());
             dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
                 captureClockEditors(editors);
                 List<ClockEntry> updated = new ArrayList<>();
@@ -1046,6 +1057,7 @@ public final class MainActivity extends Activity {
             border.setStrokeWidth(dp(1));
             code.setTypeface(android.graphics.Typeface.MONOSPACE);
             code.setFakeBoldText(true);
+            code.setTextAlign(Paint.Align.CENTER);
             time.setTypeface(android.graphics.Typeface.MONOSPACE);
             time.setFakeBoldText(true);
             time.setTextAlign(Paint.Align.CENTER);
@@ -1175,8 +1187,8 @@ public final class MainActivity extends Activity {
             float width = right - left;
             float height = bottom - top;
             float innerPadding = Math.max(dp(5), height * 0.08f);
-            float labelWidth = Math.max(dp(64), width * 0.20f);
-            labelWidth = Math.min(labelWidth, width * 0.31f);
+            float labelWidth = Math.max(dp(52), width * 0.31f);
+            labelWidth = Math.min(labelWidth, width * 0.38f);
             float dividerX = left + labelWidth;
 
             canvas.drawRect(left, top, right, bottom, border);
@@ -1190,23 +1202,21 @@ public final class MainActivity extends Activity {
             boolean hasDetail = showDate || showDoy || showWeekday;
             float scale = textScale();
             float timeAreaWidth = Math.max(dp(100), right - dividerX - dp(4));
-            float codeSize = Math.min(height * 0.34f * scale, labelWidth * 0.29f);
             float timeHeightFactor = hasDetail ? 0.47f : 0.62f;
-            float timeSize = Math.min(
+            float labelAreaWidth = Math.max(dp(28), labelWidth - dp(16));
+            float mainTextSize = Math.min(
                     height * timeHeightFactor * scale,
-                    timeAreaWidth / 8f * 1.47f);
+                    Math.min(
+                            labelAreaWidth / 3f * 1.47f,
+                            timeAreaWidth / 8f * 1.47f));
             float detailSize = Math.min(
                     height * 0.15f * scale,
                     timeAreaWidth / 24f * 1.45f);
 
-            code.setTextSize(Math.max(dp(12), codeSize));
-            time.setTextSize(Math.max(dp(17), timeSize));
+            mainTextSize = Math.max(dp(12), mainTextSize);
+            code.setTextSize(mainTextSize);
+            time.setTextSize(mainTextSize);
             detail.setTextSize(Math.max(dp(8), detailSize));
-
-            Paint.FontMetrics codeMetrics = code.getFontMetrics();
-            float codeY = top + height / 2f
-                    - (codeMetrics.ascent + codeMetrics.descent) / 2f;
-            canvas.drawText(entry.label, left + dp(10), codeY, code);
 
             ZoneOffset offset = ZoneOffset.ofTotalSeconds(entry.offsetMinutes * 60);
             OffsetDateTime localTime = now.atOffset(offset);
@@ -1217,6 +1227,7 @@ public final class MainActivity extends Activity {
                 Paint.FontMetrics timeMetrics = time.getFontMetrics();
                 float timeY = top + height / 2f
                         - (timeMetrics.ascent + timeMetrics.descent) / 2f;
+                canvas.drawText(entry.label, left + labelWidth / 2f, timeY, code);
                 canvas.drawText(formattedTime, centerX, timeY, time);
                 return;
             }
@@ -1232,6 +1243,7 @@ public final class MainActivity extends Activity {
             float timeY = groupTop - timeMetrics.ascent;
             float detailY = groupTop + timeTextHeight + lineGap - detailMetrics.ascent;
 
+            canvas.drawText(entry.label, left + labelWidth / 2f, timeY, code);
             canvas.drawText(formattedTime, centerX, timeY, time);
             canvas.drawText(dateDetail, centerX, detailY, detail);
         }

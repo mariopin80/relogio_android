@@ -15,6 +15,7 @@ Aplicativo Android nativo para exibir até oito horários simultâneos, inspirad
 - Opção de manter a tela ligada durante o uso.
 - Layout automático, em uma coluna ou em duas colunas.
 - Reordenação dos relógios e ajustes de tamanho do texto e espaçamento.
+- Sigla e horário com o mesmo tamanho e alinhamento tipográfico.
 - Data, dia da semana e dia do ano (DOY) configuráveis.
 - Temas Mission Red, Terminal Green, Amber, Monochrome White e Night Red.
 - Proteção opcional contra burn-in para telas OLED.

@@ -23,7 +23,8 @@
     <string name="sync_failure">Sincronizzazione non disponibile; viene usata l’ora del dispositivo.</string>
     <string name="display_section">Schermo</string>
     <string name="layout_mode">Layout</string>
-    <string name="text_size">Dimensione del testo</string>
+    <string name="text_size">Dimensione di sigla e ora</string>
+    <string name="text_size_help">Regola insieme la sigla, l’ora e la riga della data. L’app le riduce automaticamente quando lo spazio è limitato.</string>
     <string name="spacing">Spaziatura dei pannelli</string>
     <string name="date_section">Data e calendario</string>
     <string name="show_date">Mostra data</string>

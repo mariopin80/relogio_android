@@ -23,7 +23,8 @@
     <string name="sync_failure">Synchronisation indisponible ; utilisation de l’heure de l’appareil.</string>
     <string name="display_section">Affichage</string>
     <string name="layout_mode">Disposition</string>
-    <string name="text_size">Taille du texte</string>
+    <string name="text_size">Taille du sigle et de l’heure</string>
+    <string name="text_size_help">Règle ensemble le sigle, l’heure et la ligne de date. L’application les réduit automatiquement lorsque l’espace est limité.</string>
     <string name="spacing">Espacement des panneaux</string>
     <string name="date_section">Date et calendrier</string>
     <string name="show_date">Afficher la date</string>

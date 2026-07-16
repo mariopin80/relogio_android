@@ -23,7 +23,8 @@
     <string name="sync_failure">Synchronization unavailable; using device time.</string>
     <string name="display_section">Display</string>
     <string name="layout_mode">Layout</string>
-    <string name="text_size">Text size</string>
+    <string name="text_size">Clock and label size</string>
+    <string name="text_size_help">Adjusts the label, clock and date line together. The app reduces them automatically when space is limited.</string>
     <string name="spacing">Panel spacing</string>
     <string name="date_section">Date and calendar</string>
     <string name="show_date">Show date</string>
