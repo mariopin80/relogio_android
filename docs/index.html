@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Official support page for Mission Control Clock by Mario Pin - PU2PTU.">
+  <meta name="theme-color" content="#090a0c">
+  <link rel="canonical" href="https://mariopin80.github.io/relogio_android/">
+  <title>Mission Control Clock</title>
+  <style>
+    :root { color-scheme: dark; --bg:#090a0c; --panel:#15171b; --line:#30343b; --text:#f4f5f6; --muted:#a9afb8; --red:#e03535; }
+    * { box-sizing: border-box; }
+    body { margin:0; min-height:100vh; display:grid; place-items:center; padding:24px; background:radial-gradient(circle at 50% 10%, #20242a 0, var(--bg) 48%); color:var(--text); font:16px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif; }
+    main { width:min(760px,100%); padding:clamp(28px,6vw,56px); border:1px solid var(--line); border-radius:20px; background:rgba(21,23,27,.94); box-shadow:0 24px 70px #0009; }
+    .mark { display:inline-grid; place-items:center; width:62px; height:62px; margin-bottom:20px; border:2px solid var(--red); border-radius:50%; color:var(--red); font-weight:800; letter-spacing:.08em; }
+    h1 { margin:0; font-size:clamp(2rem,7vw,3.8rem); line-height:1; letter-spacing:.04em; }
+    .byline { margin:.9rem 0 2rem; color:var(--muted); }
+    p { max-width:62ch; }
+    nav { display:flex; flex-wrap:wrap; gap:12px; margin-top:28px; }
+    a { display:inline-block; padding:11px 16px; border:1px solid var(--line); border-radius:9px; color:var(--text); text-decoration:none; }
+    a.primary { border-color:var(--red); background:var(--red); color:#fff; font-weight:700; }
+    a:hover, a:focus-visible { border-color:#fff; outline:none; }
+    footer { margin-top:34px; padding-top:18px; border-top:1px solid var(--line); color:var(--muted); font-size:.9rem; }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="mark" aria-hidden="true">UTC</div>
+    <h1>MISSION<br>CONTROL CLOCK</h1>
+    <p class="byline">By Mario Pin - PU2PTU</p>
+    <p>A clean multi-clock display inspired by mission control rooms, with up to eight configurable UTC clocks and internet time synchronization.</p>
+    <nav aria-label="Support links">
+      <a class="primary" href="privacy-policy/">Privacy Policy</a>
+      <a href="mailto:mario.pu2ptu@gmail.com">Support</a>
+    </nav>
+    <footer>Mission Control Clock for Android · Package br.com.pu2ptu.missioncontrolclock</footer>
+  </main>
+</body>
+</html>
