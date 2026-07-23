@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Mission Control Clock</string>
+    <string name="settings_title">Clock settings</string>
+    <string name="general_section">General</string>
+    <string name="language_label">App language</string>
+    <string name="keep_screen_on">Keep screen on</string>
+    <string name="automatic_sync">Automatic time synchronization</string>
+    <string name="automatic_sync_help">When disabled, the app uses the device time. Manual synchronization remains available.</string>
+    <string name="clocks_section">Clocks</string>
+    <string name="settings_help">Enable up to eight clocks, enter a label of up to 3 characters, and select a fixed UTC offset.</string>
+    <string name="clock_number">Clock %1$d</string>
+    <string name="label_hint">ID</string>
+    <string name="utc_offset">UTC offset</string>
+    <string name="cancel">Cancel</string>
+    <string name="sync_now">Sync now</string>
+    <string name="save">Save</string>
+    <string name="enable_one_clock">Enable at least one clock.</string>
+    <string name="save_error">Settings could not be saved.</string>
+    <string name="settings_saved">Settings saved.</string>
+    <string name="synchronizing">Synchronizing…</string>
+    <string name="sync_success">Synchronized via %1$s</string>
+    <string name="sync_failure">Synchronization unavailable; using device time.</string>
+    <string name="display_section">Display</string>
+    <string name="layout_mode">Layout</string>
+    <string name="text_size">Clock and label size</string>
+    <string name="text_size_help">Adjusts the label, clock and date line together. The app reduces them automatically when space is limited.</string>
+    <string name="spacing">Panel spacing</string>
+    <string name="date_section">Date and calendar</string>
+    <string name="show_date">Show date</string>
+    <string name="show_doy">Show day of year (DOY)</string>
+    <string name="show_weekday">Show weekday</string>
+    <string name="appearance_section">Appearance</string>
+    <string name="color_theme">Color theme</string>
+    <string name="burn_in_protection">Burn-in protection</string>
+    <string name="burn_in_help">Subtly shifts the panel once per minute to reduce wear on OLED screens.</string>
+    <string name="reorder_help">Use the arrows to change the order of the clocks.</string>
+    <string name="move_up">Move clock up</string>
+    <string name="move_down">Move clock down</string>
+    <string name="sync_status_device_time">Device time</string>
+    <string name="sync_status_synchronizing">Synchronizing…</string>
+    <string name="sync_status_failed">Synchronization failed · device time</string>
+    <string name="sync_status_synchronized">%1$s · Δ %2$s ms · RTT %3$d ms · %4$s UTC</string>
+
+    <string-array name="layout_modes">
+        <item>Automatic</item>
+        <item>One column</item>
+        <item>Two columns</item>
+    </string-array>
+    <string-array name="text_sizes">
+        <item>Small</item>
+        <item>Medium</item>
+        <item>Large</item>
+    </string-array>
+    <string-array name="spacing_options">
+        <item>Compact</item>
+        <item>Balanced</item>
+        <item>Comfortable</item>
+    </string-array>
+    <string-array name="color_themes">
+        <item>Mission Red</item>
+        <item>Terminal Green</item>
+        <item>Amber</item>
+        <item>Monochrome White</item>
+        <item>Night Red</item>
+    </string-array>
+</resources>

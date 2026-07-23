@@ -1,0 +1,8 @@
+.gradle/
+**/build/
+artifacts/
+previous-release/
+private-signing/
+*.jks
+*.keystore
+local.properties

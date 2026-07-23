@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Horloge du Centre de Contrôle</string>
+    <string name="settings_title">Paramètres des horloges</string>
+    <string name="general_section">Général</string>
+    <string name="language_label">Langue de l’application</string>
+    <string name="keep_screen_on">Garder l’écran allumé</string>
+    <string name="automatic_sync">Synchronisation automatique de l’heure</string>
+    <string name="automatic_sync_help">Lorsqu’elle est désactivée, l’application utilise l’heure de l’appareil. La synchronisation manuelle reste disponible.</string>
+    <string name="clocks_section">Horloges</string>
+    <string name="settings_help">Activez jusqu’à huit horloges, saisissez un sigle de 3 caractères maximum et choisissez un décalage UTC fixe.</string>
+    <string name="clock_number">Horloge %1$d</string>
+    <string name="label_hint">SIG</string>
+    <string name="utc_offset">Décalage UTC</string>
+    <string name="cancel">Annuler</string>
+    <string name="sync_now">Synchroniser</string>
+    <string name="save">Enregistrer</string>
+    <string name="enable_one_clock">Activez au moins une horloge.</string>
+    <string name="save_error">Impossible d’enregistrer les paramètres.</string>
+    <string name="settings_saved">Paramètres enregistrés.</string>
+    <string name="synchronizing">Synchronisation…</string>
+    <string name="sync_success">Synchronisé via %1$s</string>
+    <string name="sync_failure">Synchronisation indisponible ; utilisation de l’heure de l’appareil.</string>
+    <string name="display_section">Affichage</string>
+    <string name="layout_mode">Disposition</string>
+    <string name="text_size">Taille du sigle et de l’heure</string>
+    <string name="text_size_help">Règle ensemble le sigle, l’heure et la ligne de date. L’application les réduit automatiquement lorsque l’espace est limité.</string>
+    <string name="spacing">Espacement des panneaux</string>
+    <string name="date_section">Date et calendrier</string>
+    <string name="show_date">Afficher la date</string>
+    <string name="show_doy">Afficher le jour de l’année (DOY)</string>
+    <string name="show_weekday">Afficher le jour de la semaine</string>
+    <string name="appearance_section">Apparence</string>
+    <string name="color_theme">Thème de couleur</string>
+    <string name="burn_in_protection">Protection contre le marquage</string>
+    <string name="burn_in_help">Décale légèrement le panneau une fois par minute afin de réduire l’usure des écrans OLED.</string>
+    <string name="reorder_help">Utilisez les flèches pour modifier l’ordre des horloges.</string>
+    <string name="move_up">Déplacer l’horloge vers le haut</string>
+    <string name="move_down">Déplacer l’horloge vers le bas</string>
+    <string name="sync_status_device_time">Heure de l’appareil</string>
+    <string name="sync_status_synchronizing">Synchronisation…</string>
+    <string name="sync_status_failed">Échec de synchronisation · heure de l’appareil</string>
+    <string name="sync_status_synchronized">%1$s · Δ %2$s ms · RTT %3$d ms · %4$s UTC</string>
+
+    <string-array name="layout_modes">
+        <item>Automatique</item>
+        <item>Une colonne</item>
+        <item>Deux colonnes</item>
+    </string-array>
+    <string-array name="text_sizes">
+        <item>Petit</item>
+        <item>Moyen</item>
+        <item>Grand</item>
+    </string-array>
+    <string-array name="spacing_options">
+        <item>Compact</item>
+        <item>Équilibré</item>
+        <item>Confortable</item>
+    </string-array>
+    <string-array name="color_themes">
+        <item>Rouge Mission Control</item>
+        <item>Vert Terminal</item>
+        <item>Ambre</item>
+        <item>Blanc Monochrome</item>
+        <item>Rouge Nocturne</item>
+    </string-array>
+</resources>
